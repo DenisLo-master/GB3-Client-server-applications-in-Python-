@@ -13,5 +13,5 @@ for host_item in host_list:
     data_ping = subprocess.Popen(args, stdout=subprocess.PIPE)
     result[host_item] = []
     for line in data_ping:
-        result[host_item].append(line.decode("utf-8"))
+        result[host_item].append(line.decode("utf-8",'replace'))
     print(*result[host_item],'-'*20)
