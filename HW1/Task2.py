@@ -3,9 +3,9 @@
 # encode, decode или функцию bytes) и определить тип, содержимое и длину соответствующих переменных.
 
 
-listWords = ["class", "function", "method"]
+list_words = ["class", "function", "method"]
 
-for listItem in listWords:
-    listItemBytes = 'b' + '"' + listItem + '"'
-    listItemBytes = eval(listItemBytes)
-    print(listItemBytes, type(listItemBytes), 'length =', len(listItemBytes))
+for list_item in list_words:
+    list_item_bytes = 'b' + '"' + list_item + '"'
+    list_item_bytes = eval(list_item_bytes)
+    print(list_item_bytes, type(list_item_bytes), 'length =', len(list_item_bytes))
