@@ -5,6 +5,7 @@
 list_words = ["разработка", "администрирование", "protocol", "standard"]
 list_words_enc=[]
 
+
 for list_item in list_words:
     list_item_enc = list_item.encode(encoding="utf-8")
     list_words_enc.append(list_item_enc)

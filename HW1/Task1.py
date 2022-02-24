@@ -5,6 +5,7 @@
 
 list_words = ["разработка", "сокет", "декоратор"]
 
+
 for list_item in list_words:
     print(list_item, type(list_item))
 

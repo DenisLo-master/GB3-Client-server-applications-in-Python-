@@ -5,6 +5,7 @@
 
 list_words = ["class", "function", "method"]
 
+
 for list_item in list_words:
     list_item_bytes = 'b' + '"' + list_item + '"'
     list_item_bytes = eval(list_item_bytes)

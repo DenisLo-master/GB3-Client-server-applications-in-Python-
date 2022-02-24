@@ -3,6 +3,7 @@
 
 list_words = ["attribute", "класс", "функция", "type"]
 
+
 for list_item in list_words:
     try:
         list_item_dec=bytes(list_item, encoding='ascii',)
