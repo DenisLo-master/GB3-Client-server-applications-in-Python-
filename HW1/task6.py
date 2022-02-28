@@ -15,6 +15,6 @@ with open('test_file.txt', 'rb') as f:
     print(detect(content))
     encoding = detect(content)['encoding']
 
-with open('test_file.txt', encoding=encoding) as f:
-    content = f.read()
+with open('test_file.txt', encoding=encoding) as file:
+    content = file.read()
     print(content)
