@@ -13,21 +13,78 @@
 
 from chardet import detect
 import re
+import numpy as np
+import csv
 
+os_prod_list=[]
+os_name_list=[]
+os_code_list=[]
+os_type_list=[]
+
+
+parameter_os_list=['Изготовитель системы:', 'Название ОС:', 'Код продукта:', 'Тип системы:']
+file_list = ['info_1.txt', 'info_2.txt', 'info_3.txt']
 
 def get_data():
-    file_list = ['info_1.txt', 'info_2.txt', 'info_3.txt']
-    for file in file_list:
-        with open(file, 'rb') as f:
-            content = f.read()
-            print(detect(content))
-            encoding = detect(content)['encoding']
 
-        with open(file, encoding=encoding) as f:
-            content = f.read()
-            print('!' * 50, content)
+# Вариант 1 (пункт ДЗ, фиксированный список параметров)
+#     main_data =[]
+##########
 
-        for match in re.finditer('Название\sОС:\s*\w*$', content):
-            print('результат:', match[0], match.start(), 'YES' if match else 'NO')
+# Вариант 2  (зависиит от исходного списка параметров в переменной parameter_os_list)
+    main_data = [[" " for m in range(len(file_list))] for n in range(len(parameter_os_list))]
+##########
 
-get_data()
+    for i in range(len(file_list)):
+        with open(file_list[i], 'rb') as f:
+            file_content = f.read()
+            encoding = detect(file_content)['encoding']
+
+        with open(file_list[i], encoding=encoding) as f:
+            file_content = f.read()
+
+
+#Вариант 1 (пункт ДЗ, фиксированный список параметров)
+    #     match_prod= re.search('Изготовитель\sсистемы:\s*(.*\S)(\s*\n|\n)', file_content)
+    #     os_prod_list.append(match_prod[1])
+    #     match_name = re.search('Название\sОС:\s*(.*\S)(\s*\n|\n)', file_content)
+    #     os_name_list.append(match_name[1])
+    #     match_code = re.search('Код\sпродукта:\s*(.*\S)(\s*\n|\n)', file_content)
+    #     os_code_list.append(match_code[1])
+    #     match_type = re.search('Тип\sсистемы:\s*(.*\S)(\s*\n|\n)', file_content)
+    #     os_type_list.append(match_type[1])
+    # main_data = [os_prod_list, os_name_list, os_code_list, os_type_list]
+##########
+
+# Вариант 2 (зависиит от исходного списка параметров в переменной parameter_os_list)
+        for j in range(len(parameter_os_list)):
+            match_regexp= f"r\'{parameter_os_list[j]}\\s*(.*\S)(\s*\\n|\\n)\'"
+            match_regexp=eval(match_regexp)
+            match = re.search(match_regexp, file_content)
+            main_data[j][i]=match[1]
+
+##########
+
+    main_data = np.array(main_data)
+    main_data = np.transpose(main_data)
+    main_data = np.row_stack((parameter_os_list, main_data))
+    return main_data.tolist()
+
+
+def write_to_csv(file_link):
+    with open(file_link, 'w',encoding='utf-8') as result_file:
+        file_writer = csv.writer(result_file)
+        data=get_data()
+        for row in data:
+            file_writer.writerow(row)
+
+
+
+
+
+write_to_csv('result_data.csv')
+
+with open('result_data.csv', 'r', encoding='utf-8') as f_n:
+    f_n_reader = csv.reader(f_n)
+    for row in f_n_reader:
+        print(row)
