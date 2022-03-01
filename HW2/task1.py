@@ -75,7 +75,6 @@ def write_to_csv(file_link):
         data = get_data()
         for data_row in data:
             file_writer.writerow(data_row)
-
     return
 
 
