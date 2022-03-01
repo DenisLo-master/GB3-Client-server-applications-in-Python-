@@ -70,7 +70,7 @@ def get_data():
 
 
 def write_to_csv(file_link):
-    with open(file_link, 'w', encoding='utf-8') as result_file:
+    with open(file_link, 'w', encoding='utf-8', newline='') as result_file:
         file_writer = csv.writer(result_file)
         data = get_data()
         for data_row in data:
@@ -84,3 +84,4 @@ with open('result_data.csv', 'r', encoding='utf-8') as f_n:
     f_n_reader = csv.reader(f_n)
     for row in f_n_reader:
         print(row)
+
