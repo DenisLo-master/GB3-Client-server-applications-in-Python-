@@ -18,7 +18,7 @@ USER = 'user'
 ACCOUN_NAME = 'account_name'
 
 # Прочие ключи, используемые в протоколе
-PRESENSE ='presense'
+PRESENSE = 'presense'
 RESPONSE = 'response'
 ERROR = 'error'
 RESPONDEFAULT_IP_ADDRESS = 'respondefault_ip_adress'

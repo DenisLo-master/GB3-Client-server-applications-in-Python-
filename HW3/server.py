@@ -6,9 +6,8 @@
 # отправляет ответ клиенту; имеет параметры командной строки: -p <port> — TCP-порт для работы (по умолчанию
 # использует 7777); -a <addr> — IP-адрес для прослушивания (по умолчанию слушает все доступные адреса).
 
-import socket
 import sys
-from socket import AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
+from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from common.variables import ACTION, ACCOUN_NAME, RESPONSE, MAX_CONNECTION, PRESENSE, TIME, USER, ERROR, DEFAULT_PORT, \
     RESPONDEFAULT_IP_ADDRESS
 from common.utilites import get_message, send_message
@@ -58,7 +57,7 @@ except IndexError:
     sys.exit(1)
 
 # готовим сокет
-transport = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+transport = socket(AF_INET, SOCK_STREAM)
 transport.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 transport.bind((listen_address, listen_port))
 
