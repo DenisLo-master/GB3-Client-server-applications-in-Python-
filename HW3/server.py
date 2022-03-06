@@ -60,7 +60,7 @@ transport = socket(AF_INET, SOCK_STREAM)
 transport.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 transport.bind((listen_address, listen_port))
 
-# слушаем порт
+# слушаем порт на входящие подключения
 transport.listen(MAX_CONNECTION)
 
 while True:
