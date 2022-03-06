@@ -1,15 +1,15 @@
 from common.variables import MAX_PACKAGE_LENGTH, ENCODING
 import json
 
-'''
-Утилита приема и декодирования сообщения
-принимает байты и выдает словарь, если принято, что-то другое отдает ошибку значения
-:param client:
-:return:
-'''
-
 
 def get_message(client_socket):
+    """
+    Утилита приема и декодирования сообщения
+    принимает байты и выдает словарь, если принято,
+    что-то другое отдает ошибку значения
+    :param client_socket:
+    :return:
+    """
     encoded_response = client_socket.recv(MAX_PACKAGE_LENGTH)
     if isinstance(encoded_response, bytes):
         json_response = encoded_response.decode(ENCODING)
@@ -20,16 +20,14 @@ def get_message(client_socket):
     raise ValueError
 
 
-'''
-Утилита кодирования и отправки сообщения
-принимает словарь и отправляет его
-:param sock:
-:param message:
-:return:
-'''
-
-
 def send_message(client_socket, message):
+    """
+    Утилита кодирования и отправки сообщения
+    принимает словарь и отправляет его
+    :param client_socket:
+    :param message:
+    :return:
+    """
     if not isinstance(message, dict):
         raise TypeError
     json_message = json.dumps(message)

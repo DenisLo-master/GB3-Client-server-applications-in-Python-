@@ -13,16 +13,15 @@ from common.variables import ACTION, ACCOUN_NAME, RESPONSE, MAX_CONNECTION, PRES
 from common.utilites import get_message, send_message
 import json
 
-'''
-Обработчик сообщений от клиентов, принимает словарь - 
-сообщение от клиента, проверяет корректность,
-возвращает словарь ответ для клиента
-:param message:
-:return:
-'''
-
 
 def process_client_message(message):
+    """
+    Обработчик сообщений от клиентов, принимает словарь -
+    сообщение от клиента, проверяет корректность,
+    возвращает словарь ответ для клиента
+    :param message:
+    :return:
+    """
     if ACTION in message and message[ACTION] == PRESENSE and TIME in message \
             and USER in message and message[USER][ACCOUN_NAME] == 'Guest':
         return {RESPONSE: 200}
