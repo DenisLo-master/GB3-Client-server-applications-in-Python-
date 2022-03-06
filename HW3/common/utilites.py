@@ -1,5 +1,5 @@
-from common.variables import MAX_PACKAGE_LENGTH, ENCODING
 import json
+from common.variables import MAX_PACKAGE_LENGTH, ENCODING
 
 
 def get_message(client_socket):
