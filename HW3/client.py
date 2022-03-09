@@ -36,7 +36,7 @@ def process_answer(message):
     raise ValueError
 
 
-def main():
+def check_port():
     try:
         if '-p' in sys.argv:
             server_port = int(sys.argv[sys.argv.index('-p') + 1])
@@ -50,7 +50,10 @@ def main():
     except ValueError:
         print('В качестве порта укажите значение от 1024 до 65535')
         sys.exit(1)
+    return server_port
 
+
+def check_address():
     try:
         if '-a' in sys.argv:
             server_address = int(sys.argv[sys.argv.index('-a') + 1])
@@ -59,7 +62,16 @@ def main():
 
     except IndexError:
         print('После параметра -\'a\' необходимо указать адрес клиента, который будет слушать сервер')
-        sys.exit(1)
+        sys.exit('После параметра -\'a\' необходимо указать адрес клиента, который будет слушать сервер')
+    return server_address
+
+
+def main():
+    server_address = ''
+    server_port = int
+
+    check_port()
+    check_address()
 
     # готовим сокет
     transport = socket(AF_INET, SOCK_STREAM)
