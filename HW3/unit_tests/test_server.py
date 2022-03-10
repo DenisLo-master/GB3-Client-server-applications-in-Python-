@@ -2,10 +2,9 @@ import os.path
 import unittest
 # from unittest.mock import patch  # имитация действия функции sys запуск из терминала
 import sys
-import server
+from server import process_client_message
 
-sys.path.append(os.path.join(os.getcwd(), '..'))
-
+# sys.path.append(os.path.join(os.getcwd(), '..'))
 
 
 class TestProcessClientMessage(unittest.TestCase):
@@ -13,4 +12,5 @@ class TestProcessClientMessage(unittest.TestCase):
     def test_structure_message(self):
         message = {'a': 1, 'b': 2}
         result = {'response': 400, 'error': 'Bad request'}
-        self.assertEqual(result, server.process_client_message(message))
+        self.assertEqual(result, process_client_message(message))
+
