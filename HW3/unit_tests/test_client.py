@@ -7,6 +7,7 @@ import client
 sys.path.append(os.path.join(os.getcwd(), '..'))
 
 
+
 class TestCheckPort(unittest.TestCase):
 
     @patch.object(sys, 'argv', ['client.py', '-p'])
@@ -91,3 +92,4 @@ class TestProcessAnswer(unittest.TestCase):
     def test_response_message_error(self):
         message = {'response': 400, 'error': 'Bad request'}
         self.assertEqual('400: Bad request', client.process_answer(message))
+

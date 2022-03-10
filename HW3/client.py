@@ -40,6 +40,7 @@ def process_answer(message):
 
 
 def check_port():
+
     if '-p' in sys.argv:
         server_port = int(sys.argv[sys.argv.index('-p') + 1])
     else:
@@ -70,21 +71,27 @@ def validate_address(argv_address):
 
 
 def main():
+
     try:
         server_port = check_port()
     except IndexError:
         sys.exit('После параметра -\'p\' необходимо указать номер порта')
     except ValueError:
+
         sys.exit('В качестве порта укажите значение от 1024 до 65535')
 
+
+def check_address():
     try:
         server_address = validate_address(check_address())
     except IndexError:
+
         sys.exit('После параметра -\'a\' необходимо указать адрес сервера для подключения')
     except TypeError:
         sys.exit('IP адрес указан не правильно, запишите в формате 0.0.0.0')
     except ValueError:
         sys.exit('указан некорректный IP адрес')
+
 
     # готовим сокет
     transport = socket(AF_INET, SOCK_STREAM)
