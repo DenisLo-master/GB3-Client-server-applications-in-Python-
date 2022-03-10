@@ -5,7 +5,7 @@ import sys
 import server
 
 sys.path.append(os.path.join(os.getcwd(), '..'))
-print(sys.path)
+
 
 
 class TestProcessClientMessage(unittest.TestCase):
