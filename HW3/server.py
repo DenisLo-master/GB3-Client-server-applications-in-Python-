@@ -8,8 +8,7 @@
 
 import sys
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
-from common.variables import ACTION, ACCOUN_NAME, RESPONSE, MAX_CONNECTION, PRESENSE, TIME, USER, ERROR, DEFAULT_PORT, \
-    RESPONDEFAULT_IP_ADDRESS
+from common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTION, PRESENCE, TIME, USER, ERROR, DEFAULT_PORT
 from common.utilites import get_message, send_message
 import json
 
@@ -22,11 +21,11 @@ def process_client_message(message):
     :param message:
     :return:
     """
-    if ACTION in message and message[ACTION] == PRESENSE and TIME in message \
-            and USER in message and message[USER][ACCOUN_NAME] == 'Guest':
+    if ACTION in message and message[ACTION] == PRESENCE and TIME in message \
+            and USER in message and message[USER][ACCOUNT_NAME] == 'Guest':
         return {RESPONSE: 200}
     return {
-        RESPONDEFAULT_IP_ADDRESS: 400,
+        RESPONSE: 400,
         ERROR: 'Bad request'
     }
 
@@ -74,3 +73,5 @@ while True:
     except (ValueError, json.JSONDecodeError):
         print('Получено не корректное сообщение от клиента.')
         client_socket.close()
+
+
