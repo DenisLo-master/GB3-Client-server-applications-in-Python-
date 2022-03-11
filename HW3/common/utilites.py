@@ -18,8 +18,8 @@ def get_message(client_socket):
         response = json.loads(json_response)
         if isinstance(response, dict):
             return response
-        raise ValueError
-    raise ValueError
+        raise TypeError
+    raise TypeError
 
 
 def send_message(client_socket, message):
@@ -78,4 +78,3 @@ def validation_address_ipv4(argv_address):
     else:
         raise TypeError
     return argv_address
-
