@@ -16,10 +16,10 @@ ENCODING = 'utf-8'
 ACTION = 'action'
 TIME = 'time'
 USER = 'user'
-ACCOUN_NAME = 'account_name'
+ACCOUNT_NAME = 'account_name'
 
 # Прочие ключи, используемые в протоколе
-PRESENSE = 'presense'
+PRESENCE = 'presence'
 RESPONSE = 'response'
 ERROR = 'error'
 RESPONDEFAULT_IP_ADDRESS = 'respondefault_ip_adress'
