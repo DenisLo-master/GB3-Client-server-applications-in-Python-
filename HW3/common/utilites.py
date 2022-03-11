@@ -1,7 +1,7 @@
 
-from common.variables import MAX_PACKAGE_LENGTH, ENCODING
+from common.variables import MAX_PACKAGE_LENGTH, ENCODING, DEFAULT_PORT, DEFAULT_IP_ADDRESS
 import json
-
+import sys
 
 
 def get_message(client_socket):
@@ -35,3 +35,33 @@ def send_message(client_socket, message):
     json_message = json.dumps(message)
     encoding_message = json_message.encode(ENCODING)
     client_socket.send(encoding_message)
+
+
+def check_port():
+    if '-p' in sys.argv:
+        port = int(sys.argv[sys.argv.index('-p') + 1])
+    else:
+        port = DEFAULT_PORT
+    if port < 1024 or port > 65535:
+        raise ValueError
+    return port
+
+
+def check_address():
+    if '-a' in sys.argv:
+        argv_address = int(sys.argv[sys.argv.index('-a') + 1])
+    else:
+        argv_address = DEFAULT_IP_ADDRESS
+    return argv_address
+
+
+def validation_address_ipv4(argv_address):
+    if len(argv_address.split('.')) == 4:
+        for item in argv_address.split('.'):
+            if int(item) < 0 or int(item) > 255:
+                raise ValueError
+            else:
+                return argv_address
+    else:
+        raise TypeError
+    return argv_address

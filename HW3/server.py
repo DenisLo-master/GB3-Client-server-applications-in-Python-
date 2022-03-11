@@ -8,8 +8,8 @@
 
 import sys
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
-from common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTION, PRESENCE, TIME, USER, ERROR, DEFAULT_PORT
-from common.utilites import get_message, send_message
+from common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTION, PRESENCE, TIME, USER, ERROR
+from common.utilites import get_message, send_message, check_port, check_address, validation_address_ipv4
 import json
 
 
@@ -21,57 +21,60 @@ def process_client_message(message):
     :param message:
     :return:
     """
-    if ACTION in message and message[ACTION] == PRESENCE and TIME in message \
-            and USER in message and message[USER][ACCOUNT_NAME] == 'Guest':
-        return {RESPONSE: 200}
+    if isinstance(message, dict):
+        if ACTION in message and message[ACTION] == PRESENCE and TIME in message \
+                and USER in message and message[USER][ACCOUNT_NAME] == 'Guest':
+            return {RESPONSE: 200}
+        return {
+            RESPONSE: 400,
+            ERROR: 'Bad request'
+        }
     return {
         RESPONSE: 400,
         ERROR: 'Bad request'
     }
 
 
-try:
-    if '-p' in sys.argv:
-        listen_port = int(sys.argv[sys.argv.index('-p') + 1])
-    else:
-        listen_port = DEFAULT_PORT
-    if listen_port < 1024 or listen_port > 65535:
-        raise ValueError
-except IndexError:
-    print('После параметра -\'p\' необходимо указать номер порта')
-    sys.exit(1)
-except ValueError:
-    print('В качестве порта может быть указано значение от 1024 до 65535')
-    sys.exit(1)
-
-try:
-    if '-a' in sys.argv:
-        listen_address = int(sys.argv[sys.argv.index('-a') + 1])
-    else:
-        listen_address = ''
-
-except IndexError:
-    print('После параметра -\'a\' необходимо указать адрес клиента, который будет слушать сервер')
-    sys.exit(1)
-
-# готовим сокет
-transport = socket(AF_INET, SOCK_STREAM)
-transport.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-transport.bind((listen_address, listen_port))
-
-# слушаем порт на входящие подключения
-transport.listen(MAX_CONNECTION)
-
-while True:
-    client_socket, client_address = transport.accept()
+def main():
+    print('запуск сервера')
     try:
-        message_from_client = get_message(client_socket)
-        print(message_from_client)
-        response = process_client_message(message_from_client)
-        send_message(client_socket, response)
-        client_socket.close()
-    except (ValueError, json.JSONDecodeError):
-        print('Получено не корректное сообщение от клиента.')
-        client_socket.close()
+        listen_port = check_port()
+    except IndexError:
+        sys.exit('После параметра -\'p\' необходимо указать номер порта для подключения')
+    except ValueError:
+        sys.exit('В качестве порта укажите значение от 1024 до 65535')
+
+    try:
+        listen_address = validation_address_ipv4(check_address())
+    except IndexError:
+        sys.exit('После параметра -\'a\' можно указать IP адрес клиента, остальные клиенты будут отклонены')
+    except TypeError:
+        sys.exit('IP адрес указан не правильно, запишите в формате 0.0.0.0')
+    except ValueError:
+        sys.exit('указан некорректный IP адрес')
+
+    # готовим сокет
+    transport = socket(AF_INET, SOCK_STREAM)
+    transport.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    transport.bind((listen_address, listen_port))
+
+    # слушаем порт на входящие подключения
+    transport.listen(MAX_CONNECTION)
+    print('сервер запущен, ожидает подклчение клиентов')
+
+    while True:
+        client_socket, client_address = transport.accept()
+        print('подключение клиента')
+        try:
+            message_from_client = get_message(client_socket)
+            response = process_client_message(message_from_client)
+            send_message(client_socket, response)
+            client_socket.close()
+            print('Клиент подключен')
+        except (ValueError, json.JSONDecodeError):
+            print('Получено не корректное сообщение от клиента.')
+            client_socket.close()
 
 
+if __name__ == '__main__':
+    main()

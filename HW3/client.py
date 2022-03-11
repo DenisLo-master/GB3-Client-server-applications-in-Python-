@@ -2,9 +2,8 @@ import json
 import sys
 import time
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
-from common.utilites import get_message, send_message
-from common.variables import ACTION, ACCOUNT_NAME, PRESENCE, RESPONSE, TIME, USER, ERROR, DEFAULT_PORT, \
-    DEFAULT_IP_ADDRESS
+from common.utilites import get_message, send_message, check_port, check_address, validation_address_ipv4
+from common.variables import ACTION, ACCOUNT_NAME, PRESENCE, RESPONSE, TIME, USER, ERROR
 
 
 def create_presence(account_name='Guest'):
@@ -29,44 +28,16 @@ def process_answer(message):
     :param message:
     :return:
     """
-    if RESPONSE in message:
-        if message[RESPONSE] == 200:
-            return '200: OK'
-        elif message[RESPONSE] == 400:
-            return f'400: {message[ERROR]}'
-        else:
-            raise IndexError
-    raise ValueError
-
-
-def check_port():
-    if '-p' in sys.argv:
-        server_port = int(sys.argv[sys.argv.index('-p') + 1])
-    else:
-        server_port = DEFAULT_PORT
-    if server_port < 1024 or server_port > 65535:
-        raise ValueError
-    return server_port
-
-
-def check_address():
-    if '-a' in sys.argv:
-        argv_address = int(sys.argv[sys.argv.index('-a') + 1])
-    else:
-        argv_address = DEFAULT_IP_ADDRESS
-    return argv_address
-
-
-def validate_address(argv_address):
-    if len(argv_address.split('.')) == 4:
-        for item in argv_address.split('.'):
-            if int(item) < 0 or int(item) > 255:
-                raise ValueError
+    if isinstance(message, dict):
+        if RESPONSE in message:
+            if message[RESPONSE] == 200:
+                return '200: OK'
+            elif message[RESPONSE] == 400:
+                return f'400: {message[ERROR]}'
             else:
-                argv_address
-    else:
-        raise TypeError
-    return argv_address
+                raise IndexError
+        raise ValueError
+    raise TypeError
 
 
 def main():
@@ -78,7 +49,7 @@ def main():
         sys.exit('В качестве порта укажите значение от 1024 до 65535')
 
     try:
-        server_address = validate_address(check_address())
+        server_address = validation_address_ipv4(check_address())
     except IndexError:
         sys.exit('После параметра -\'a\' необходимо указать адрес сервера для подключения')
     except TypeError:
