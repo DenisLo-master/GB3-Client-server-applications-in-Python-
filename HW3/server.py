@@ -47,11 +47,11 @@ def main():
     try:
         listen_address = validation_address_ipv4(check_address())
     except IndexError:
-        sys.exit('После параметра -\'a\' можно указать IP адрес клиента, остальные клиенты будут отклонены')
+        sys.exit('После параметра -\'a\' можно указать IP адрес сервера')
     except TypeError:
         sys.exit('IP адрес указан не правильно, запишите в формате 0.0.0.0')
     except ValueError:
-        sys.exit('указан некорректный IP адрес')
+        sys.exit('указан некорректный IP адрес сервера')
 
     # готовим сокет
     transport = socket(AF_INET, SOCK_STREAM)
@@ -64,15 +64,15 @@ def main():
 
     while True:
         client_socket, client_address = transport.accept()
-        print('подключение клиента')
+        print(f'подключение клиента {client_address[0]}:{client_address[1]}')
         try:
             message_from_client = get_message(client_socket)
             response = process_client_message(message_from_client)
             send_message(client_socket, response)
             client_socket.close()
-            print('Клиент подключен')
+            print(f'Клиент подключен {client_address[0]}:{client_address[1]}')
         except (ValueError, json.JSONDecodeError):
-            print('Получено не корректное сообщение от клиента.')
+            print(f'Получено не корректное сообщение от клиента {client_address[0]}:{client_address[1]}')
             client_socket.close()
 
 

@@ -38,6 +38,10 @@ def send_message(client_socket, message):
 
 
 def check_port():
+    """
+    Утилита для проверки введенного порта через командную строку, либо присвоение значение по умолчанию
+    :return:
+    """
     if '-p' in sys.argv:
         port = int(sys.argv[sys.argv.index('-p') + 1])
     else:
@@ -48,14 +52,23 @@ def check_port():
 
 
 def check_address():
+    """
+    Утилита для проверки наличия введенного ip адреса через командную строку, либо присвоение значения по умолчанию
+    :return:
+    """
     if '-a' in sys.argv:
-        argv_address = int(sys.argv[sys.argv.index('-a') + 1])
+        argv_address = sys.argv[sys.argv.index('-a') + 1]
     else:
         argv_address = DEFAULT_IP_ADDRESS
     return argv_address
 
 
 def validation_address_ipv4(argv_address):
+    """
+    Утилита для проверки валидности полученного ip адреса
+    :param argv_address:
+    :return:
+    """
     if len(argv_address.split('.')) == 4:
         for item in argv_address.split('.'):
             if int(item) < 0 or int(item) > 255:
@@ -65,3 +78,4 @@ def validation_address_ipv4(argv_address):
     else:
         raise TypeError
     return argv_address
+

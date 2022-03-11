@@ -62,7 +62,7 @@ def main():
     transport.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 
     # подключение к серверу
-    print('Подключен к серверу:', server_address, server_port)
+    print(f'Подключение к серверу: {server_address}:{server_port}')
     transport.connect((server_address, server_port))
 
     message_to_server = create_presence()

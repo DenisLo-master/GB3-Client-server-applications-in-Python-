@@ -66,5 +66,11 @@ class TestValidateAddress(unittest.TestCase):
         self.assertRaises(ValueError, validation_address_ipv4, 'fd.0.0.1')
 
 
+class TestConnection(unittest.TestCase):
+    test_message = {
+        {'response': 400, 'error': 'Bad request'}
+    }
+
+
 if __name__ == '__main__':
     unittest.main()
