@@ -3,7 +3,9 @@ import unittest
 import sys
 from client import create_presence, process_answer
 
+
 sys.path.append(os.path.join(os.getcwd(), '..'))
+
 
 
 class TestCreatePresence(unittest.TestCase):
@@ -28,6 +30,7 @@ class TestCreatePresence(unittest.TestCase):
     def test_type_message(self):
         """Тест корректного вывода сообщения, в виде словаря"""
         self.assertIsInstance(create_presence(), dict)
+
 
 
 class TestProcessAnswer(unittest.TestCase):
@@ -68,3 +71,4 @@ class TestProcessAnswer(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
