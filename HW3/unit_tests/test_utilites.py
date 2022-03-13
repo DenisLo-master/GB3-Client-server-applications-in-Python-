@@ -4,10 +4,10 @@ import sys
 import os.path
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from unittest.mock import patch  # имитация действия функции sys запуск из терминала
-from common.utilites import check_port, check_address, validation_address_ipv4, get_message, send_message
-from common.variables import ENCODING, MAX_PACKAGE_LENGTH
 
 sys.path.append(os.path.join(os.getcwd(), '..'))
+from common.utilites import check_port, check_address, validation_address_ipv4, get_message, send_message
+from common.variables import ENCODING, MAX_PACKAGE_LENGTH
 
 
 class TestCheckPort(unittest.TestCase):

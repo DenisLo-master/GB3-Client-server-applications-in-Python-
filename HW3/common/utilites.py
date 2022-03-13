@@ -1,4 +1,3 @@
-
 from common.variables import MAX_PACKAGE_LENGTH, ENCODING, DEFAULT_PORT, DEFAULT_IP_ADDRESS
 import json
 import sys

@@ -1,9 +1,9 @@
 import os.path
 import unittest
 import sys
-from client import create_presence, process_answer
 
 sys.path.append(os.path.join(os.getcwd(), '..'))
+from client import create_presence, process_answer
 
 
 class TestCreatePresence(unittest.TestCase):
