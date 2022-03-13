@@ -1,10 +1,10 @@
 import os.path
 import unittest
 import sys
-from server import process_client_message
-from client import create_presence
 
 sys.path.append(os.path.join(os.getcwd(), '..'))
+from server import process_client_message
+from client import create_presence
 
 
 class TestProcessClientMessage(unittest.TestCase):
@@ -46,4 +46,3 @@ class TestProcessClientMessage(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
