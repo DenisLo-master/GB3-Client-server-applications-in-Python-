@@ -1,95 +1,74 @@
 import os.path
 import unittest
-from unittest.mock import patch  # имитация действия функции sys запуск из терминала
 import sys
-import client
+from client import create_presence, process_answer
+
 
 sys.path.append(os.path.join(os.getcwd(), '..'))
 
 
 
-class TestCheckPort(unittest.TestCase):
-
-    @patch.object(sys, 'argv', ['client.py', '-p'])
-    def test_without_port_with_p(self):
-        self.assertRaises(IndexError, client.check_port)
-
-    @patch.object(sys, 'argv', ['client.py', '-p', 777])
-    def test_with_wrong_port_min(self):
-        self.assertRaises(ValueError, client.check_port)
-
-    @patch.object(sys, 'argv', ['client.py', '-p', 98777])
-    def test_with_wrong_port_max(self):
-        self.assertRaises(ValueError, client.check_port)
-
-    @patch.object(sys, 'argv', ['client.py', '-p', 'f45454'])
-    def test_with_wrong_type_port_str(self):
-        self.assertRaises(ValueError, client.check_port)
-
-    @patch.object(sys, 'argv', ['client.py', '-p', 4.5454])
-    def test_with_wrong_type_port_float(self):
-        self.assertRaises(ValueError, client.check_port)
-
-
-class TestCheckAddress(unittest.TestCase):
-
-    def test_with_a_without_address(self):
-        with patch.object(sys, 'argv', ['client.py', '-a']):
-            self.assertRaises(IndexError, client.check_address)
-
-
-class TestValidateAddress(unittest.TestCase):
-
-    def test_wrong_delimetr_address(self):
-        self.assertRaises(TypeError, client.validate_address, '127,0,0.1')
-
-    def test_wrong_length_address_min(self):
-        self.assertRaises(TypeError, client.validate_address, '401.0.1')
-
-    def test_wrong_length_address_max(self):
-        self.assertRaises(TypeError, client.validate_address, '401.0.1.2.5')
-
-    def test_wrong_address(self):
-        self.assertRaises(ValueError, client.validate_address, '401.0.0.1')
-
-    def test_wrong_type_address(self):
-        self.assertRaises(ValueError, client.validate_address, 'fd.0.0.1')
-
-
 class TestCreatePresence(unittest.TestCase):
 
-    def test_check_structure(self):
+    def test_check_template(self):
+        """Тест соответствия шаблону сообщения по ключам"""
         template = ['action', 'time', 'user']
-        self.assertCountEqual(template, client.create_presence().keys())
+        self.assertCountEqual(template, create_presence().keys())
 
-    def test_structure_account_name_in_user_presence(self):
-        self.assertIn('account_name', client.create_presence()['user'].keys())
+    def test_structure_account_name_in_user(self):
+        """Тест наличия словаря {ACCOUNT_NAME: account_name} для ключа USER"""
+        self.assertIn('account_name', create_presence()['user'].keys())
 
     def test_type_action_message(self):
-        self.assertEqual('presence', client.create_presence()['action'])
+        """Тест соответвия типа сообщения 'presence' по ключу 'action' """
+        self.assertEqual('presence', create_presence()['action'])
 
     def test_format_time_presence(self):
-        self.assertIsInstance(client.create_presence()['time'], float)
+        """Тест соответствия формата времени в ключе time """
+        self.assertIsInstance(create_presence()['time'], float)
 
     def test_type_message(self):
-        self.assertIsInstance(client.create_presence(), dict)
+        """Тест корректного вывода сообщения, в виде словаря"""
+        self.assertIsInstance(create_presence(), dict)
+
 
 
 class TestProcessAnswer(unittest.TestCase):
 
     def test_wrong_message(self):
+        """Тест исключения, на вход НЕкорректная структура сообщения"""
         message = {'a': 1, 'b': 2}
-        self.assertRaises(ValueError, client.process_answer, message)
+        self.assertRaises(ValueError, process_answer, message)
 
     def test_wrong_response_code(self):
+        """Тест исключения, неизвествного кода ошибки 1001, полученного от сервера"""
         message = {'response': 1001}
-        self.assertRaises(IndexError, client.process_answer, message)
+        self.assertRaises(IndexError, process_answer, message)
 
     def test_response_message_correct(self):
+        """Тест корректного разбора ответа 200 полученного от сервера"""
         message = {'response': 200}
-        self.assertEqual('200: OK', client.process_answer(message))
+        self.assertEqual('200: OK', process_answer(message))
 
     def test_response_message_error(self):
+        """Тест корректного разбора ответа 400 полученного от сервера, сообщение на вход в виде str"""
         message = {'response': 400, 'error': 'Bad request'}
-        self.assertEqual('400: Bad request', client.process_answer(message))
+        self.assertEqual('400: Bad request', process_answer(message))
+
+    def test_response_wront_type_str_message(self):
+        """Тест исключения, на вход НЕкорректный тип сообщения, тип str"""
+        message = 'abc'
+        self.assertRaises(TypeError, process_answer, message)
+
+    def test_response_wront_type_list_message(self):
+        """Тест исключения, на вход НЕкорректный тип сообщения, тип list"""
+        message = ['action', 'asd']
+        self.assertRaises(TypeError, process_answer, message)
+
+
+# class TestConnection(unittest.TestCase):
+
+
+if __name__ == '__main__':
+    unittest.main()
 

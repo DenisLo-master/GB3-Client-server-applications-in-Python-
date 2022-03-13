@@ -2,9 +2,9 @@ import json
 import sys
 import time
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
-from common.utilites import get_message, send_message
-from common.variables import ACTION, ACCOUNT_NAME, PRESENCE, RESPONSE, TIME, USER, ERROR, DEFAULT_PORT, \
-    DEFAULT_IP_ADDRESS
+from common.utilites import get_message, send_message, check_port, check_address, validation_address_ipv4
+from common.variables import ACTION, ACCOUNT_NAME, PRESENCE, RESPONSE, TIME, USER, ERROR
+
 
 
 def create_presence(account_name='Guest'):
@@ -29,14 +29,17 @@ def process_answer(message):
     :param message:
     :return:
     """
-    if RESPONSE in message:
-        if message[RESPONSE] == 200:
-            return '200: OK'
-        elif message[RESPONSE] == 400:
-            return f'400: {message[ERROR]}'
-        else:
-            raise IndexError
-    raise ValueError
+
+    if isinstance(message, dict):
+        if RESPONSE in message:
+            if message[RESPONSE] == 200:
+                return '200: OK'
+            elif message[RESPONSE] == 400:
+                return f'400: {message[ERROR]}'
+            else:
+                raise IndexError
+        raise ValueError
+    raise TypeError
 
 
 def check_port():
@@ -77,28 +80,23 @@ def main():
     except IndexError:
         sys.exit('После параметра -\'p\' необходимо указать номер порта')
     except ValueError:
-
         sys.exit('В качестве порта укажите значение от 1024 до 65535')
 
-
-def check_address():
     try:
-        server_address = validate_address(check_address())
+        server_address = validation_address_ipv4(check_address())
     except IndexError:
-
         sys.exit('После параметра -\'a\' необходимо указать адрес сервера для подключения')
     except TypeError:
         sys.exit('IP адрес указан не правильно, запишите в формате 0.0.0.0')
     except ValueError:
         sys.exit('указан некорректный IP адрес')
 
-
     # готовим сокет
     transport = socket(AF_INET, SOCK_STREAM)
     transport.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 
     # подключение к серверу
-    print('Подключен к серверу:', server_address, server_port)
+    print(f'Подключение к серверу: {server_address}:{server_port}')
     transport.connect((server_address, server_port))
 
     message_to_server = create_presence()
