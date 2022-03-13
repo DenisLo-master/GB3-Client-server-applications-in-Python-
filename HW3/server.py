@@ -21,6 +21,7 @@ def process_client_message(message):
     :param message:
     :return:
     """
+
     if isinstance(message, dict):
         if ACTION in message and message[ACTION] == PRESENCE and TIME in message \
                 and USER in message and message[USER][ACCOUNT_NAME] == 'Guest':
@@ -78,3 +79,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

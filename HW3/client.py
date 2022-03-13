@@ -28,6 +28,7 @@ def process_answer(message):
     :param message:
     :return:
     """
+
     if isinstance(message, dict):
         if RESPONSE in message:
             if message[RESPONSE] == 200:
@@ -41,6 +42,7 @@ def process_answer(message):
 
 
 def main():
+
     try:
         server_port = check_port()
     except IndexError:
