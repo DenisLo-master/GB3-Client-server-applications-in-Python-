@@ -72,7 +72,8 @@ def validation_address_ipv4(argv_address):
         for item in argv_address.split('.'):
             if int(item) < 0 or int(item) > 255:
                 raise ValueError
-        return argv_address
+            else:
+                return argv_address
     else:
         raise TypeError
     return argv_address
