@@ -12,22 +12,18 @@ from common.variables import LOGGING_REGISTRAR_LEVEL, STREAM_LOGGING_LEVEL, FILE
 SERVER_FORMATTER = logging.Formatter('%(asctime)-26s %(levelname)-10s %(filename)-23s %(message)s')
 
 # подготовка файла для сбора логов
-print('__file__-', __file__)
+
 PATH = os.path.dirname(os.path.abspath(__file__))
-print('print(PATH)-', PATH)
-MODULE_NAME = (str(PATH).split('/')[-1:][0])
-print('MODULE_NAME-', MODULE_NAME)
-LOG_DIR_NAME = MODULE_NAME + '_logs'
-print('LOG_DIR_NAME-', LOG_DIR_NAME)
-FILE_NAME = MODULE_NAME + '.log'
-print('FILE_NAME-', FILE_NAME)
-if not os.path.exists(LOG_DIR_NAME):
-    os.mkdir(LOG_DIR_NAME)
+# print(PATH)
+# MODULE_NAME = PATH.split('\\')[-1]
+# print('MODULE_NAME', type(MODULE_NAME), MODULE_NAME)
+# FILE_NAME = MODULE_NAME + '.log'
+# print('FILE_NAME-', FILE_NAME)
+if not os.path.exists('log'):
+    os.mkdir('log')
+PATH = os.path.join(PATH, 'log')
+PATH = os.path.join(PATH, 'server.log')
 
-
-PATH = os.path.join(PATH, LOG_DIR_NAME)
-PATH = os.path.join(PATH, FILE_NAME)
-print(PATH)
 
 #потоки вывода логов
 STREAM_HANDLER = logging.StreamHandler(sys.stderr)

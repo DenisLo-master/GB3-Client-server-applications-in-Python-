@@ -48,24 +48,24 @@ def main():
         listen_port = check_port()
         LOGGER.debug(f'порт сервера определен')
     except IndexError:
-        LOGGER.error('После параметра -\'p\' необходимо указать номер порта для подключения')
-        sys.exit('После параметра -\'p\' необходимо указать номер порта для подключения')
+        LOGGER.error('не указан порт сервера, после параметра -p')
+        sys.exit()
     except ValueError:
-        LOGGER.error('В качестве порта укажите значение от 1024 до 65535')
-        sys.exit('В качестве порта укажите значение от 1024 до 65535')
+        LOGGER.error('указан не корректный порт')
+        sys.exit()
 
     try:
         listen_address = validation_address_ipv4(check_address())
         LOGGER.debug(f'адрес сервера определен')
     except IndexError:
-        LOGGER.error('не указан IP сервераэ, после -a')
-        sys.exit('После параметра -\'a\' можно указать IP адрес сервера')
+        LOGGER.error('не указан IP сервера, после параметра -a')
+        sys.exit()
     except TypeError:
         LOGGER.error('IP адрес указан не правильно')
-        sys.exit('IP адрес указан не правильно, запишите в формате 0.0.0.0')
+        sys.exit()
     except ValueError:
         LOGGER.error('указан некорректный IP адрес сервера')
-        sys.exit('указан некорректный IP адрес сервера')
+        sys.exit()
 
     # готовим сокет
     LOGGER.debug(f'запуск сокета')
