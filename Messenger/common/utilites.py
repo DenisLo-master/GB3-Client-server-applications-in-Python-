@@ -1,6 +1,8 @@
 from common.variables import MAX_PACKAGE_LENGTH, ENCODING, DEFAULT_PORT, DEFAULT_IP_ADDRESS
 import json
 import sys
+sys.path.append('../')
+from errors import NonDictInputError
 
 
 def get_message(client_socket):
@@ -17,7 +19,7 @@ def get_message(client_socket):
         response = json.loads(json_response)
         if isinstance(response, dict):
             return response
-        raise TypeError
+        raise NonDictInputError
     raise TypeError
 
 
@@ -30,7 +32,7 @@ def send_message(client_socket, message):
     :return:
     """
     if not isinstance(message, dict):
-        raise TypeError
+        raise NonDictInputError
     json_message = json.dumps(message)
     encoding_message = json_message.encode(ENCODING)
     client_socket.send(encoding_message)
