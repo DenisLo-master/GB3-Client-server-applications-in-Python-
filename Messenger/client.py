@@ -94,15 +94,19 @@ def main():
         LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
     except json.JSONDecodeError:
         LOGGER.critical(f'Не удалось декодировать сообщение от сервера')
+        transport.close()
         LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
     except IncorrectDataRecivedErrors:
         LOGGER.critical(f'Некорректное сообщение от сервера {server_address}:{server_port}')
+        transport.close()
         LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
     except NonDictInputError:
         LOGGER.critical(f'сообщение от сервера {server_address}:{server_port} не является словарем')
+        transport.close()
         LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
     except ReqFieldMissingError:
         LOGGER.critical(f'отсутствует обязательное поле в сообщении от сервера {server_address}:{server_port}')
+        transport.close()
         LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
 
 if __name__ == '__main__':
