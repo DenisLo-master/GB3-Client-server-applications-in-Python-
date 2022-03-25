@@ -1,10 +1,8 @@
 from common.variables import MAX_PACKAGE_LENGTH, ENCODING, DEFAULT_PORT, DEFAULT_IP_ADDRESS
 import json
 import sys
-from decos import log
 
 
-@log
 def get_message(client_socket):
     """
     Утилита приема и декодирования сообщения
@@ -23,7 +21,6 @@ def get_message(client_socket):
     raise TypeError
 
 
-@log
 def send_message(client_socket, message):
     """
     Утилита кодирования и отправки сообщения
@@ -39,7 +36,6 @@ def send_message(client_socket, message):
     client_socket.send(encoding_message)
 
 
-@log
 def check_port():
     """
     Утилита для проверки введенного порта через командную строку, либо присвоение значение по умолчанию
@@ -54,7 +50,6 @@ def check_port():
     return port
 
 
-@log
 def check_address():
     """
     Утилита для проверки наличия введенного ip адреса через командную строку, либо присвоение значения по умолчанию
@@ -67,7 +62,6 @@ def check_address():
     return argv_address
 
 
-@log
 def validation_address_ipv4(argv_address):
     """
     Утилита для проверки валидности полученного ip адреса
