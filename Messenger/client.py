@@ -54,7 +54,7 @@ def main():
     LOGGER.info(f'Запуск клиента')
     try:
         server_port = check_port()
-        LOGGER.debug(f'Порт сервера определен')
+        LOGGER.debug(f'Порт сервера определен {server_port}')
     except IndexError:
         LOGGER.error('Не указан порт сервера, после параметра -p')
         sys.exit()
@@ -64,7 +64,7 @@ def main():
 
     try:
         server_address = validation_address_ipv4(check_address())
-        LOGGER.debug(f'Адрес сервера определен')
+        LOGGER.debug(f'Адрес сервера определен {server_address}')
     except IndexError:
         LOGGER.error('Не указан IP сервера, после параметра -a')
         sys.exit()
