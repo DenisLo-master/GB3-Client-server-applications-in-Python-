@@ -11,7 +11,11 @@ from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTION, PRESENCE, TIME, USER, ERROR
 from common.utilites import get_message, send_message, check_port, check_address, validation_address_ipv4
 import json
+from errors import ReqFieldMissingError, NonDictInputError, IncorrectDataRecivedErrors
+import logging
+import logs_config.server_log_config
 
+LOGGER = logging.getLogger('server')
 
 def process_client_message(message):
     """
@@ -21,15 +25,18 @@ def process_client_message(message):
     :param message:
     :return:
     """
-
+    LOGGER.debug(f'разбор сообщения от клиента {message}')
     if isinstance(message, dict):
         if ACTION in message and message[ACTION] == PRESENCE and TIME in message \
                 and USER in message and message[USER][ACCOUNT_NAME] == 'Guest':
+            LOGGER.debug(f'Код:200, сообщение от клиента - {message}')
             return {RESPONSE: 200}
+        LOGGER.error(f'Код:400, структура сообщения не корректна - {message}')
         return {
             RESPONSE: 400,
             ERROR: 'Bad request'
         }
+    LOGGER.error(f'Код:400, не корректный тип сообщения - {message}')
     return {
         RESPONSE: 400,
         ERROR: 'Bad request'
@@ -37,44 +44,60 @@ def process_client_message(message):
 
 
 def main():
-    print('запуск сервера')
+    LOGGER.info(f'Запуск сервера')
     try:
         listen_port = check_port()
+        LOGGER.debug(f'Порт сервера определен')
     except IndexError:
-        sys.exit('После параметра -\'p\' необходимо указать номер порта для подключения')
+        LOGGER.error('Не указан порт сервера, после параметра -p')
+        sys.exit()
     except ValueError:
-        sys.exit('В качестве порта укажите значение от 1024 до 65535')
+        LOGGER.error('Указан не корректный порт')
+        sys.exit()
 
     try:
         listen_address = validation_address_ipv4(check_address())
+        LOGGER.debug(f'Адрес сервера определен')
     except IndexError:
-        sys.exit('После параметра -\'a\' можно указать IP адрес сервера')
+        LOGGER.error('Не указан IP сервера, после параметра -a')
+        sys.exit()
     except TypeError:
-        sys.exit('IP адрес указан не правильно, запишите в формате 0.0.0.0')
+        LOGGER.error('IP адрес указан не правильно')
+        sys.exit()
     except ValueError:
-        sys.exit('указан некорректный IP адрес сервера')
+        LOGGER.error('Указан некорректный IP адрес сервера')
+        sys.exit()
 
     # готовим сокет
+    LOGGER.debug(f'Запуск сокета')
     transport = socket(AF_INET, SOCK_STREAM)
+    LOGGER.debug(f'Установка параметров сокета')
     transport.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     transport.bind((listen_address, listen_port))
 
     # слушаем порт на входящие подключения
     transport.listen(MAX_CONNECTION)
-    print('сервер запущен, ожидает подклчение клиентов')
+    LOGGER.info(f'Сервер {listen_address}:{listen_port} запущен, ожидает подклчение клиентов')
 
     while True:
         client_socket, client_address = transport.accept()
-        print(f'подключение клиента {client_address[0]}:{client_address[1]}')
+        LOGGER.info(f'Подключение клиента {client_address[0]}:{client_address[1]}')
         try:
             message_from_client = get_message(client_socket)
+            LOGGER.info(f'Получено сообщение от {client_address[0]}')
             response = process_client_message(message_from_client)
             send_message(client_socket, response)
+            LOGGER.info(f'Cообщение для {client_address[0]} отправлено')
             client_socket.close()
-            print(f'Клиент подключен {client_address[0]}:{client_address[1]}')
-        except (ValueError, json.JSONDecodeError):
-            print(f'Получено не корректное сообщение от клиента {client_address[0]}:{client_address[1]}')
+            LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
+        except json.JSONDecodeError:
+            LOGGER.critical(f'Не удалось декодировать сообщение от клиента {client_address[0]}:{client_address[1]}')
             client_socket.close()
+            LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
+        except NonDictInputError:
+            LOGGER.critical(f'Сообщение не является словарем')
+            client_socket.close()
+            LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
 
 
 if __name__ == '__main__':

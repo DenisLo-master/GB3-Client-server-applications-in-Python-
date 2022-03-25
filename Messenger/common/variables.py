@@ -1,6 +1,5 @@
 """ Константы """
 
-
 # Порт по умолчанию для сетевого взаимодействия
 DEFAULT_PORT = 7777
 # IP адрес по умолчанию для подключения клиента
@@ -23,3 +22,8 @@ PRESENCE = 'presence'
 RESPONSE = 'response'
 ERROR = 'error'
 RESPONDEFAULT_IP_ADDRESS = 'respondefault_ip_adress'
+
+# Уровень логгирования
+LOGGING_REGISTRAR_LEVEL = 'DEBUG'
+FILE_LOGGING_LEVEL = 'INFO'
+STREAM_LOGGING_LEVEL = 'DEBUG'
