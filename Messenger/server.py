@@ -43,6 +43,21 @@ def process_client_message(message):
     }
 
 
+def new_listen_socket(adress, port):
+    # готовим сокет
+    LOGGER.debug(f'Запуск сокета')
+    sock = socket(AF_INET, SOCK_STREAM)
+    LOGGER.debug(f'Установка параметров сокета')
+    sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    sock.bind((adress, port))
+
+    # слушаем порт на входящие подключения
+    sock.listen(MAX_CONNECTION)
+    LOGGER.info(f'Сервер {adress}:{port} запущен, ожидает подклчение клиентов')
+    sock.settimeout(0.3)
+    return sock
+
+
 def main():
     LOGGER.info(f'Запуск сервера')
     try:
@@ -68,36 +83,39 @@ def main():
         LOGGER.error('Указан некорректный IP адрес сервера')
         sys.exit()
 
-    # готовим сокет
-    LOGGER.debug(f'Запуск сокета')
-    transport = socket(AF_INET, SOCK_STREAM)
-    LOGGER.debug(f'Установка параметров сокета')
-    transport.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    transport.bind((listen_address, listen_port))
-
-    # слушаем порт на входящие подключения
-    transport.listen(MAX_CONNECTION)
-    LOGGER.info(f'Сервер {listen_address}:{listen_port} запущен, ожидает подклчение клиентов')
+    transport = new_listen_socket(listen_address, listen_port)
+    clients = []
 
     while True:
-        client_socket, client_address = transport.accept()
-        LOGGER.info(f'Подключение клиента {client_address[0]}:{client_address[1]}')
         try:
-            message_from_client = get_message(client_socket)
-            LOGGER.info(f'Получено сообщение от {client_address[0]}')
-            response = process_client_message(message_from_client)
-            send_message(client_socket, response)
-            LOGGER.info(f'Cообщение для {client_address[0]} отправлено')
-            client_socket.close()
-            LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
-        except json.JSONDecodeError:
-            LOGGER.critical(f'Не удалось декодировать сообщение от клиента {client_address[0]}:{client_address[1]}')
-            client_socket.close()
-            LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
-        except NonDictInputError:
-            LOGGER.critical(f'Сообщение не является словарем')
-            client_socket.close()
-            LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
+            client_socket, client_address = transport.accept() #проверка подключений
+        except OSError as e:
+            pass
+        else:
+            LOGGER.info(f'Подключение клиента {client_address[0]}:{client_address[1]}')
+            clients.append(client_socket)
+        finally:
+            #проверить наличие событий ввода-вывода без таймаута
+            recv_data_lst = []
+            send_data_lst = []
+            try:
+
+            try:
+                message_from_client = get_message(client_socket)
+                LOGGER.info(f'Получено сообщение от {client_address[0]}')
+                response = process_client_message(message_from_client)
+                send_message(client_socket, response)
+                LOGGER.info(f'Cообщение для {client_address[0]} отправлено')
+                client_socket.close()
+                LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
+            except json.JSONDecodeError:
+                LOGGER.critical(f'Не удалось декодировать сообщение от клиента {client_address[0]}:{client_address[1]}')
+                client_socket.close()
+                LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
+            except NonDictInputError:
+                LOGGER.critical(f'Сообщение не является словарем')
+                client_socket.close()
+                LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
 
 
 if __name__ == '__main__':
