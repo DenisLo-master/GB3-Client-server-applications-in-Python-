@@ -7,17 +7,18 @@
 # использует 7777); -a <addr> — IP-адрес для прослушивания (по умолчанию слушает все доступные адреса).
 
 import sys
-from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
-from common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTION, PRESENCE, TIME, USER, ERROR
-from common.utilites import get_message, send_message, check_port, check_address, validation_address_ipv4
+import select
 import json
+from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
+from common.variables import ACTION, ACCOUNT_NAME, RESPONSE, MAX_CONNECTION, PRESENCE, TIME, USER, ERROR, MESSAGE, MESSAGE_TEXT
+from common.utilites import get_message, send_message, check_port, check_address, validation_address_ipv4
 from errors import ReqFieldMissingError, NonDictInputError, IncorrectDataRecivedErrors
 import logging
 import logs_config.server_log_config
 
 LOGGER = logging.getLogger('server')
 
-def process_client_message(message):
+def process_client_message(message , client_with_message, messages_order):
     """
     Обработчик сообщений от клиентов, принимает словарь -
     сообщение от клиента, проверяет корректность,
@@ -28,9 +29,16 @@ def process_client_message(message):
     LOGGER.debug(f'разбор сообщения от клиента {message}')
     if isinstance(message, dict):
         if ACTION in message and message[ACTION] == PRESENCE and TIME in message \
-                and USER in message and message[USER][ACCOUNT_NAME] == 'Guest':
+                and USER in message and message[USER][ACCOUNT_NAME] != '':
             LOGGER.debug(f'Код:200, сообщение от клиента - {message}')
-            return {RESPONSE: 200}
+            messages_order[client_with_message]=message
+            return
+        elif ACTION in message and message[ACTION] == MESSAGE and TIME in message \
+                and USER in message and message[USER][ACCOUNT_NAME] != '' and MESSAGE_TEXT inn message:
+            LOGGER.debug(f'Код:200, сообщение от клиента - {message}')
+            messages_order[client_with_message]=message
+            return
+
         LOGGER.error(f'Код:400, структура сообщения не корректна - {message}')
         return {
             RESPONSE: 400,
@@ -85,6 +93,7 @@ def main():
 
     transport = new_listen_socket(listen_address, listen_port)
     clients = []
+    messages={}
 
     while True:
         try:
@@ -98,24 +107,35 @@ def main():
             #проверить наличие событий ввода-вывода без таймаута
             recv_data_lst = []
             send_data_lst = []
-            try:
 
             try:
-                message_from_client = get_message(client_socket)
-                LOGGER.info(f'Получено сообщение от {client_address[0]}')
-                response = process_client_message(message_from_client)
-                send_message(client_socket, response)
-                LOGGER.info(f'Cообщение для {client_address[0]} отправлено')
-                client_socket.close()
-                LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
-            except json.JSONDecodeError:
-                LOGGER.critical(f'Не удалось декодировать сообщение от клиента {client_address[0]}:{client_address[1]}')
-                client_socket.close()
-                LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
-            except NonDictInputError:
-                LOGGER.critical(f'Сообщение не является словарем')
-                client_socket.close()
-                LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
+                if clients:
+                    recv_data_lst, send_data_lst, _ = select.select(clients,clients,[],0)
+            except OSError:
+                pass
+
+            if recv_data_lst:
+                for client_with_message in recv_data_lst:
+                    try:
+                        message_from_client = get_message(client_with_message)
+                        print(client_with_message)
+
+                        # LOGGER.info(f'Получено сообщение от {client_address[0]}')
+                        process_client_message(message_from_client, client_with_message, messages)
+
+
+                        send_message(client_socket, response)
+                        LOGGER.info(f'Cообщение для {client_address[0]} отправлено')
+                        client_socket.close()
+                        LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
+                    except json.JSONDecodeError:
+                        LOGGER.critical(f'Не удалось декодировать сообщение от клиента {client_address[0]}:{client_address[1]}')
+                        client_socket.close()
+                        LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
+                    except NonDictInputError:
+                        LOGGER.critical(f'Сообщение не является словарем')
+                        client_socket.close()
+                        LOGGER.info(f'Сокет закрыт {client_address[0]}:{client_address[1]}')
 
 
 if __name__ == '__main__':
