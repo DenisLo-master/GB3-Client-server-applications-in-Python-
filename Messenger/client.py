@@ -87,7 +87,8 @@ def message_from_server(message):
     """
     if ACTION in message and message[ACTION] == MESSAGE and TIME in message \
                 and USER in message and message[USER][ACCOUNT_NAME] != '' and MESSAGE_TEXT in message:
-        print(f' сообщение от{message[USER][ACCOUNT_NAME]}:\n'
+        send_time = time.strftime('%H:%M', time.gmtime(message[TIME]))
+        print(f' {send_time} сообщение от{message[USER][ACCOUNT_NAME]}:\n'
               f'{message[MESSAGE_TEXT]}')
     else:
         LOGGER.error(f'Получено некорректное сообщение с сервера: {message}')

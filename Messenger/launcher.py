@@ -6,7 +6,7 @@ PROCESS = []
 
 while True:
     ACTION =input('Выберите действие: q - выход, '
-                  's - запустить серверб, x - закрыть окна: ')
+                  's - запустить сервер, x - закрыть окна: ')
 
     if ACTION == 'q':
         while PROCESS:
