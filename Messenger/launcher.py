@@ -9,6 +9,9 @@ while True:
                   's - запустить серверб, x - закрыть окна: ')
 
     if ACTION == 'q':
+        while PROCESS:
+            VICTIM = PROCESS.pop()
+            VICTIM.kill()
         break
     elif ACTION == 's':
         PROCESS.append(subprocess.Popen('python server.py', creationflags=subprocess.CREATE_NEW_CONSOLE))
@@ -16,7 +19,7 @@ while True:
         for i in range(2):
             PROCESS.append(subprocess.Popen('python client.py -m send', creationflags=subprocess.CREATE_NEW_CONSOLE))
 
-        for i in range(5):
+        for i in range(3):
             PROCESS.append(subprocess.Popen('python client.py -m listen', creationflags=subprocess.CREATE_NEW_CONSOLE))
     elif ACTION == 'x':
         while PROCESS:

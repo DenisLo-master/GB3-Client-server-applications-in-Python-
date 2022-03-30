@@ -4,7 +4,7 @@ import argparse
 from socket import socket, AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from common.utilites import get_message, send_message, check_port, check_address, validation_address_ipv4
 from common.variables import ACTION, ACCOUNT_NAME, PRESENCE, RESPONSE, TIME, USER, ERROR, MESSAGE, \
-    MESSAGE_TEXT, SENDER, DEFAULT_PORT, DEFAULT_IP_ADDRESS
+    MESSAGE_TEXT, DEFAULT_PORT, DEFAULT_IP_ADDRESS
 import json
 from errors import ReqFieldMissingError, NonDictInputError, IncorrectDataRecivedErrors
 import logging
