@@ -16,14 +16,17 @@ ACTION = 'action'
 TIME = 'time'
 USER = 'user'
 ACCOUNT_NAME = 'account_name'
+MESSAGE_TEXT = 'message_text'
+EXIT = 'exit'
 
 # Прочие ключи, используемые в протоколе
 PRESENCE = 'presence'
 RESPONSE = 'response'
+MESSAGE  = 'message'
 ERROR = 'error'
 RESPONDEFAULT_IP_ADDRESS = 'respondefault_ip_adress'
 
 # Уровень логгирования
 LOGGING_REGISTRAR_LEVEL = 'DEBUG'
 FILE_LOGGING_LEVEL = 'INFO'
-STREAM_LOGGING_LEVEL = 'DEBUG'
+STREAM_LOGGING_LEVEL = 'ERROR'
