@@ -9,7 +9,7 @@ from common.variables import LOGGING_REGISTRAR_LEVEL, STREAM_LOGGING_LEVEL, FILE
 
 
 # формировщик логов (dormatter)
-SERVER_FORMATTER = logging.Formatter('%(asctime)-26s %(levelname)-10s %(filename)-23s %(message)s')
+SERVER_FORMATTER = logging.Formatter('%(asctime)-26s %(levelname)-10s %(filename)-15s %(lineno)d  %(message)s')
 
 # подготовка файла для сбора логов
 
@@ -21,7 +21,7 @@ PATH = os.path.join(PATH, 'client.log')
 
 
 #потоки вывода логов
-STREAM_HANDLER = logging.StreamHandler(sys.stderr)
+STREAM_HANDLER = logging.StreamHandler(sys.stdout)
 STREAM_HANDLER.setFormatter(SERVER_FORMATTER)
 STREAM_HANDLER.setLevel(STREAM_LOGGING_LEVEL)
 
