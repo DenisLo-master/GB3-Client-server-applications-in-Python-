@@ -23,6 +23,7 @@ import logs_config.server_log_config
 
 LOGGER = logging.getLogger('server')
 
+
 RESPONSE_200 = {RESPONSE: 200}
 RESPONSE_400 = {
                 RESPONSE: 400,
@@ -32,6 +33,7 @@ RESPONSE_400 = {
 
 @log
 def process_client_message(message, client_sock, messages_order, clients, clients_name):
+
     """
     Обработчик сообщений от клиентов, принимает словарь -
     сообщение от клиента, проверяет корректность,
@@ -43,12 +45,12 @@ def process_client_message(message, client_sock, messages_order, clients, client
     :param clients_name:
     :return:
     """
+
     LOGGER.debug(f'разбор сообщения от клиента {get_addr_port(client_sock)}')
     if isinstance(message, dict):
         #если это сообщение о присутствии, принимаем и отвечаем
         if ACTION in message and message[ACTION] == PRESENCE and TIME in message \
                 and USER in message and message[USER][ACCOUNT_NAME] != '':
-
             if message[USER][ACCOUNT_NAME] not in clients_name.keys():
                 clients_name[message[USER][ACCOUNT_NAME]] = client_sock
                 send_message(client_sock, RESPONSE_200)
@@ -277,6 +279,7 @@ def main():
                 elif destination != FOR_ALL:
                     LOGGER.debug(f'Получатель: {destination}, {messages[destination]}')
                     send_message_for_waiting(destination, messages, clients_name, clients)
+
             messages.clear()
             LOGGER.debug(f'Все сообщения из очереди сообщений "messages" отправлены, очистка очереди')
 

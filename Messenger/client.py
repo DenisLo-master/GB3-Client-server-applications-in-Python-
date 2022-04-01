@@ -1,4 +1,3 @@
-import keyword
 import sys
 import threading
 import time
@@ -19,6 +18,7 @@ import logs_config.client_log_config
 
 
 LOGGER = logging.getLogger('client')
+
 
 
 @log
@@ -277,27 +277,33 @@ def main():
         transport.connect((server_address, server_port))
         LOGGER.info(f'Подключение к серверу: {server_address}:{server_port}')
         message_to_server = create_presence(client_name)
+
         send_message(transport, message_to_server)
         LOGGER.debug(f'Сообщение отправлено к серверу: {server_address}:{server_port}')
         LOGGER.info(f'Ожидание ответа от сервера {server_address}:{server_port}: ')
         process_answer(get_message(transport))
     except json.JSONDecodeError:
         LOGGER.critical(f'Не удалось декодировать сообщение от сервера')
-        transport.close()
+        transport.close(1)
         LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
         sys.exit(1)
     except IncorrectDataRecivedErrors:
         LOGGER.critical(f'Некорректное сообщение от сервера {server_address}:{server_port}')
-        transport.close()
+        transport.close(1)
         LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
         sys.exit(1)
     except NonDictInputError:
         LOGGER.critical(f'сообщение от сервера {server_address}:{server_port} не является словарем')
-        transport.close()
+        transport.close(1)
         LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
         sys.exit(1)
     except ReqFieldMissingError:
         LOGGER.critical(f'отсутствует обязательное поле в сообщении от сервера {server_address}:{server_port}')
+        transport.close(1)
+        LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
+    except ConnectionRefusedError:
+        LOGGER.critical(f'Не удалось пожключиться к серверу {server_address}:{server_port},'
+                        f'конечный компьютер отверг запрос на подключение')
         transport.close()
         LOGGER.info(f'Сокет закрыт {server_address}:{server_port}')
         sys.exit(1)

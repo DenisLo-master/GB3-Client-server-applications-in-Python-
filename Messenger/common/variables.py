@@ -21,6 +21,7 @@ DESTINATION = 'destination'
 MESSAGE_TEXT = 'message_text'
 
 
+
 # Прочие ключи, используемые в протоколе
 PRESENCE = 'presence'
 RESPONSE = 'response'
@@ -34,4 +35,4 @@ FOR_ALL = 'for_all'
 # Уровень логгирования
 LOGGING_REGISTRAR_LEVEL = 'DEBUG'
 FILE_LOGGING_LEVEL = 'INFO'
-STREAM_LOGGING_LEVEL = 'DEBUG'
+STREAM_LOGGING_LEVEL = 'ERROR'
